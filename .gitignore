@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Telescope
+/app/Providers/TelescopeServiceProvider.php
+/config/telescope.php
+/database/migrations/0001_01_01_000003_create_telescope_entries_table.php
+/public/vendor/telescope/*
