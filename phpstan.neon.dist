@@ -1,0 +1,36 @@
+# @see https://phpstan.org/user-guide/getting-started
+# @see https://github.com/larastan/larastan
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - bootstrap/
+        - config/
+        - database/
+        - routes/
+        - tests/
+        - rector.php
+        - artisan
+
+    excludePaths:
+        - bootstrap/cache/
+
+        # Telescope
+        - app/Providers/TelescopeServiceProvider.php (?)
+        - config/telescope.php (?)
+        - database/migrations/0001_01_01_000003_create_telescope_entries_table.php (?)
+
+        # Pest
+        - tests/Architecture
+        - tests/Pest.php
+
+    level: max
+
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true
+
+#    ignoreErrors:
+#        - '#PHPDoc tag @var#'
