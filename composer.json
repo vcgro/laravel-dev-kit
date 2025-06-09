@@ -9,18 +9,17 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
-        "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.41",
         "larastan/larastan": "^3.4",
+        "laravel/pail": "^1.2",
         "laravel/pint": "^1.22",
+        "laravel/sail": "^1.43",
         "laravel/telescope": "^5.8",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
@@ -65,7 +64,54 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "test:feature": "@php artisan test --testsuite=Feature",
+        "test:unit": "@php artisan test --testsuite=Unit",
+        "test:arch": "@php artisan test --testsuite=Architecture",
+        "install:telescope": [
+            "@php artisan telescope:install",
+            "mv \"$(find database/migrations -name '*_create_telescope_entries_table.php')\" database/migrations/0001_01_01_000003_create_telescope_entries_table.php"
+        ],
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=-1",
+        "pint": "vendor/bin/pint",
+        "pint:check": "vendor/bin/pint --test",
+        "phpcbf": "vendor/bin/phpcbf",
+        "phpcs": "vendor/bin/phpcs",
+        "rector": "vendor/bin/rector process --clear-cache",
+        "rector:check": "vendor/bin/rector process --clear-cache --dry-run",
+        "quality-make": [
+            "@php -r \"echo '▶ Running Pint...\n';\"",
+            "composer pint",
+            "@php -r \"echo '▶ Running PHP Code Beautifier\n...\n';\"",
+            "composer phpcbf",
+            "@php -r \"echo '▶ Running Rector...\n';\"",
+            "composer rector"
+        ],
+        "quality-check": [
+            "@php -r \"echo '▶ Running PHPStan...\n';\"",
+            "composer phpstan",
+            "@php -r \"echo '▶ Running Pint checking...\n';\"",
+            "composer pint:check",
+            "@php -r \"echo '▶ Running PHP CodeSniffer...\n';\"",
+            "composer phpcs",
+            "@php -r \"echo '▶ Running Rector checking...\n';\"",
+            "composer rector:check",
+            "@php -r \"echo '▶ Running architecture tests...\n';\"",
+            "composer test:arch"
         ]
+    },
+    "scripts-descriptions": {
+        "test:arch": "Run Pest architectural tests",
+        "install:telescope": "Install Laravel Telescope and rename its migration to a fixed timestamp",
+        "phpstan": "Run PHPStan with unlimited memory",
+        "pint": "Fix code style issues using Laravel Pint",
+        "pint:check": "Check code style without making changes using Laravel Pint",
+        "phpcbf": "Automatically fix coding standard violations using PHP_CodeSniffer",
+        "phpcs": "Check code for coding standard violations using PHP_CodeSniffer",
+        "rector": "Apply automated code refactorings using Rector",
+        "rector:check": "Preview code refactorings using Rector",
+        "quality-make": "Run all code fixers",
+        "quality-check": "Run all code quality tools"
     },
     "extra": {
         "laravel": {
