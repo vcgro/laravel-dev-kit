@@ -1,0 +1,109 @@
+variables:
+  TESTING_DB_NAME: testing_db
+  TESTING_DB_PASSWORD: secret
+
+stages:
+  - build
+  - quality_checks
+  - release
+
+.quality_checks_rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+build:
+  stage: build
+  image: php:8.4-fpm-alpine
+  variables:
+    APP_DEBUG: false
+    DB_CONNECTION: testing
+    DB_TESTING_DATABASE: $TESTING_DB_NAME
+    DB_TESTING_PASSWORD: $TESTING_DB_PASSWORD
+  before_script:
+    - apk add --no-cache --update curl git jpeg-dev libpng-dev libzip-dev freetype-dev libxml2-dev
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install -j$(nproc) gd xml zip > /dev/null
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+  script:
+    - cp .env.example .env
+    - env APP_ENV=testing
+    - composer install
+    - php artisan key:generate
+    - php artisan config:cache
+  artifacts:
+    untracked: true
+    access: none
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+tests-feature:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  services:
+    - mysql:8.0
+  variables:
+    MYSQL_DATABASE: $TESTING_DB_NAME
+    MYSQL_ROOT_PASSWORD: $TESTING_DB_PASSWORD
+  before_script:
+    - docker-php-ext-install -j$(nproc) pdo_mysql > /dev/null
+  script:
+    - php artisan migrate --force
+    - composer test:feature -- --do-not-cache-result
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+tests-unit:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer test:unit -- --do-not-cache-result
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+tests-arch:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer test:arch -- --do-not-cache-result
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+phpstan:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer phpstan
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+phpcs:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer phpcs
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+pint:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer pint:check
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
+
+rector:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  script:
+    - composer rector:check
+  rules:
+    - !reference [ .quality_checks_rules, rules ]
