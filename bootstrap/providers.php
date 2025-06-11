@@ -6,17 +6,17 @@ use App\Providers\AppServiceProvider;
 use App\Providers\TelescopeServiceProvider;
 use Laravel\Telescope\TelescopeServiceProvider as LibTelescopeServiceProvider;
 
-$localProviders = [];
+$telescopeProviders = [];
 if (
     app()->environment('local')
     && class_exists(LibTelescopeServiceProvider::class)
     && class_exists(TelescopeServiceProvider::class)
 ) {
-    $localProviders[] = LibTelescopeServiceProvider::class;
-    $localProviders[] = TelescopeServiceProvider::class;
+    $telescopeProviders[] = LibTelescopeServiceProvider::class;
+    $telescopeProviders[] = TelescopeServiceProvider::class;
 }
 
 return [
     AppServiceProvider::class,
-    ...$localProviders
+    ...$telescopeProviders
 ];
