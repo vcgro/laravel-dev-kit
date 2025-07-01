@@ -107,3 +107,14 @@ rector:
     - composer rector:check
   rules:
     - !reference [ .quality_checks_rules, rules ]
+
+peck:
+  stage: quality_checks
+  image: php:8.4-fpm-alpine
+  needs: [ "build" ]
+  before_script:
+    - apk add --no-cache --update aspell aspell-en
+  script:
+    - composer peck
+  rules:
+    - !reference [ .quality_checks_rules, rules ]

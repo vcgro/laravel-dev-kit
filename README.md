@@ -11,8 +11,9 @@ and development efficiency:
 5. Pint (with PSR-12 rule)
 6. Pest (for Architecture Test)
 7. PHPUnit
-8. Telescope
-9. Make (+ composer scripts)
+8. Peck
+9. Telescope
+10. Make (+ composer scripts)
 
 All tools are configured to complement each other and work together without conflicts.
 The default settings may feel quite strict at first, but you can gradually relax
@@ -104,6 +105,16 @@ composer test:arch
 
 Predefined tests: [ArchTest.php](tests/Architecture/ArchTest.php)
 
+## Peck
+[Peck](https://github.com/peckphp/peck) a tool for identify wording or spelling
+mistakes in your codebase.
+
+```shell
+composer peck
+```
+
+Configuration file: [peck.json](peck.json)
+
 ## Telescope
 [Laravel Telescope](https://laravel.com/docs/12.x/telescope)  is a valuable
 debugging tool for Laravel projects. In this repository, its files are
@@ -145,5 +156,3 @@ Also could be helpful:
 * [Rector SwissKnife](https://github.com/rectorphp/swiss-knife)
 * [Deptrac](https://deptrac.github.io/deptrac/)
 * [Laravel Blueprint](https://blueprint.laravelshift.com/)
-
-
