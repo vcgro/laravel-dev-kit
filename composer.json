@@ -64,7 +64,7 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php artisan test --parallel"
         ],
         "test:feature": "@php artisan test --testsuite=Feature",
         "test:unit": "@php artisan test --testsuite=Unit",
